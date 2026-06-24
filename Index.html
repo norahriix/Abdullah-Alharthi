@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة الحارثي لإدارة العقارات</title>
+    <style>
+        :root {
+            --primary-color: #0f172a;   /* كحلي ملكي عميق جداً */
+            --luxury-gold: #b45309;    /* ذهبي خافت فاخر */
+            --success-color: #15803d;   /* أخضر عشبي هادئ */
+            --warning-color: #d97706;   /* برتقالي دافئ للتعديل */
+            --danger-color: #991b1b;    /* أحمر داكن للحذف */
+            --bg-body: #f8fafc;         /* خلفية ناصعة ومريحة */
+            --card-bg: #ffffff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --border-radius: 16px;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-body);
+            margin: 0;
+            padding: 0;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* الهيدر الاحترافي */
+        header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #1e293b 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 4px solid var(--luxury-gold);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        header p {
+            margin: 10px 0 0 0;
+            color: #94a3b8;
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        /* حاوية مرنة متوافقة مع الجوال، الأيباد، والشاشات الكبيرة */
+        .main-container {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 30px;
+        }
+
+        /* تعديل الشاشات المتوسطة والصغيرة (الآيباد والجوال) */
+        @media (max-width: 1024px) {
+            .main-container { 
+                grid-template-columns: 1fr; 
+                margin: 20px auto;
+            }
+        }
+
+        /* لوحات التحكم والبطاقات */
+        .card-panel {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01), 0 2px 4px -1px rgba(0,0,0,0.01), 0 20px 25px -5px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+            height: fit-content;
+        }
+
+        @media (max-width: 480px) {
+            .card-panel { padding: 20px; }
+        }
+
+        .card-panel h2 {
+            font-size: 1.4rem;
+            margin-top: 0;
+            margin-bottom: 25px;
+            color: var(--primary-color);
+            font-weight: 700;
+            border-bottom: 2px solid var(--bg-body);
+            padding-bottom: 15px;
+        }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        
+        /* جعل الصفوف عمودية في الشاشات الصغيرة جداً */
+        @media (max-width: 480px) {
+            .form-row { grid-template-columns: 1fr; gap: 0; }
+        }
+
+        .form-group { margin-bottom: 20px; }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            background-color: #f1f5f9;
+            color: var(--text-dark);
+        }
+
+        textarea { resize: vertical; min-height: 100px; }
+
+        input[type="file"] {
+            padding: 10px;
+            background: #ffffff;
+            border: 1px dashed var(--border-color);
+            cursor: pointer;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--luxury-gold);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 4px rgba(180, 83, 9, 0.1);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 6px rgba(15, 23, 42, 0.1);
+        }
+
+        .btn-submit:hover {
+            background-color: #1e293b;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px rgba(15, 23, 42, 0.15);
+        }
+
+        .card-panel.edit-mode { border: 2px solid var(--warning-color); }
+
+        .cancel-edit-btn {
+            background-color: #64748b;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+            transition: var(--transition);
+        }
+        .cancel-edit-btn:hover { background-color: #475569; }
+
+        /* منطقة أدوات التصفية والبحث */
+        .search-wrapper {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.02);
+            border: 1px solid var(--border-color);
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .search-wrapper { grid-template-columns: 1fr; gap: 12px; padding: 15px; }
+        }
+
+        /* شبكة كروت العقارات */
+        .properties-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 30px;
+        }
+
+        @media (max-width: 480px) {
+            .properties-grid { grid-template-columns: 1fr; gap: 20px; }
+        }
+
+        .realestate-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01), 0 20px 25px -5px rgba(0,0,0,0.03);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .realestate-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+            border-color: rgba(180, 83, 9, 0.2);
+        }
+
+        .card-media {
+            position: relative;
+            height: 220px;
+            background-color: #cbd5e1;
+        }
+
+        .card-media img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .card-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(15, 23, 42, 0.9);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(4px);
+        }
+
+        .card-price {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: var(--success-color);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 10px rgba(21, 128, 61, 0.3);
+        }
+
+        /* غياب الصورة الأساسية */
+        .no-image-layout {
+            padding: 25px 25px 5px 25px;
+            background: linear-gradient(to bottom, #f8fafc 0%, #ffffff 100%);
+            border-bottom: 1px solid var(--bg-body);
+        }
+        .no-image-layout .info-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .no-image-layout .type-tag {
+            background: var(--primary-color);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .no-image-layout .price-tag {
+            color: var(--success-color);
+            font-weight: 700;
+            font-size: 1.2rem;
+            border-bottom: 2px solid rgba(21, 128, 61, 0.2);
+        }
+
+        .card-body { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
+        @media (max-width: 480px) { .card-body { padding: 15px; } }
+
+        .card-title { margin: 0 0 12px 0; font-size: 1.3rem; color: var(--primary-color); font-weight: 700; }
+        .card-location { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; display: flex; gap: 6px; align-items: center; }
+
+        .card-features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            border: 1px solid #f1f5f9;
+        }
+        
+        /* تكييف تفاصيل المزايا على الشاشات الصغيرة جداً */
+        @media (max-width: 360px) {
+            .card-features { grid-template-columns: 1fr; }
+        }
+
+        /* تنسيق خانة التواصل القابلة للنسخ في الخارج */
+        .card-contact-field {
+            background: #f0fdf4;
+            border: 1px dashed #bbf7d0;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 0.9rem;
+            color: #166534;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        .card-contact-field:hover { background: #dcfce7; }
+        .copy-badge {
+            font-size: 0.75rem;
+            background: var(--success-color);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: normal;
+        }
+
+        .card-details-text {
+            font-size: 0.9rem;
+            background: #fffbeb;
+            border-right: 4px solid var(--luxury-gold);
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            white-space: pre-line;
+            color: #92400e;
+        }
+
+        .brokers-section { border-top: 1px solid #f1f5f9; padding-top: 15px; margin-top: auto; }
+        .brokers-section label { margin-bottom: 6px; color: var(--text-muted); font-size: 0.8rem; }
+        
+        /* التعديل 1: إزالة كلمة مكتب المضافة برمجياً والاعتماد على نص الإدخال الحر */
+        .broker-chip { background: #f1f5f9; color: var(--primary-color); padding: 5px 14px; border-radius: 30px; font-size: 0.8rem; display: inline-block; margin: 4px; font-weight: 600; border: 1px solid var(--border-color); }
+
+        .card-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding: 20px 25px;
+            background: #f8fafc;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .btn-action {
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-edit { background-color: #f1f5f9; color: var(--primary-color); border: 1px solid var(--border-color); }
+        .btn-edit:hover { background-color: #e2e8f0; }
+        .btn-delete { background-color: rgba(153, 27, 27, 0.08); color: var(--danger-color); }
+        .btn-delete:hover { background-color: rgba(153, 27, 27, 0.15); }
+
+        /* تصميم شاشة عرض التفاصيل الكبيرة والوسائط (Modal) */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0; visibility: hidden;
+            transition: var(--transition);
+            padding: 10px; /* لحماية الأطراف على الجوال */
+            box-sizing: border-box;
+        }
+
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+
+        .modal-wrapper {
+            background: white;
+            width: 100%;
+            max-width: 850px;
+            max-height: 90vh;
+            border-radius: var(--border-radius);
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .modal-header h2 { margin: 0; font-size: 1.4rem; font-weight: 700; }
+        .close-modal-btn { background: transparent; border: none; color: white; font-size: 1.8rem; cursor: pointer; transition: var(--transition); }
+        .close-modal-btn:hover { color: var(--luxury-gold); }
+
+        .modal-content-body { padding: 25px; }
+
+        .modal-highlight-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+        .modal-title-big { font-size: 1.6rem; font-weight: 800; color: var(--primary-color); margin: 0; }
+        .modal-price-big { font-size: 1.5rem; font-weight: 800; color: var(--success-color); }
+
+        .modal-grid-features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 600px) {
+            .modal-grid-features { grid-template-columns: 1fr; gap: 10px; }
+        }
+
+        .modal-feature-box {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+        .modal-feature-box span { display: block; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 5px; font-weight: 600; }
+        .modal-feature-box strong { font-size: 1.1rem; color: var(--primary-color); word-break: break-word; }
+
+        .modal-long-details {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            background: #fffdf5;
+            border-right: 5px solid var(--luxury-gold);
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 35px;
+            white-space: pre-line;
+        }
+
+        /* تصميم معرض الوسائط */
+        .gallery-title { font-size: 1.1rem; font-weight: 700; color: var(--primary-color); margin-bottom: 15px; border-bottom: 1px dashed var(--border-color); padding-bottom: 8px; }
+        .modal-gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+        }
+        .gallery-item-wrapper {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #000;
+            border: 1px solid var(--border-color);
+            height: 140px;
+        }
+        .gallery-item-wrapper img, .gallery-item-wrapper video {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+        .download-media-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: var(--transition);
+        }
+        .gallery-item-wrapper:hover .download-media-overlay { opacity: 1; }
+        .btn-download {
+            background: white; color: var(--primary-color);
+            border: none; padding: 6px 14px; border-radius: 6px;
+            font-weight: 700; font-size: 0.8rem; text-decoration: none;
+            cursor: pointer; transition: var(--transition);
+        }
+        .btn-download:hover { background: var(--luxury-gold); color: white; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>منصة الحارثي لإدارة العقارات</h1>
+    <p>نظام داخلي متكامل للربط بين الملاك، الوسطاء، والفلترة الفورية للعقارات والفلل</p>
+</header>
+
+<div class="main-container">
+    
+    <div class="card-panel" id="formPanel">
+        <h2 id="formTitle">تسجيل عقار جديد</h2>
+        <form id="propertyForm">
+            <input type="hidden" id="editPropertyId" value="">
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>نوع العقار</label>
+                    <select id="propType" required>
+                        <option value="فيلا">فيلا</option>
+                        <option value="شقة">شقة</option>
+                        <option value="عمارة">عمارة</option>
+                        <option value="أرض">أرض</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>المساحة (م²)</label>
+                    <input type="number" id="propSpace" placeholder="مثال: 350" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>المدينة</label>
+                    <input type="text" id="propCity" placeholder="مثال: الرياض" required>
+                </div>
+                <div class="form-group">
+                    <label>الحي</label>
+                    <input type="text" id="propDistrict" placeholder="مثال: العزيزية" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>السعر (ريال سعودي)</label>
+                <input type="number" id="propPrice" placeholder="مثال: 4000000" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>اسم المالك</label>
+                    <input type="text" id="propOwner" placeholder="صاحب العقار الأساسي" required>
+                </div>
+                <div class="form-group">
+                    <label>رقم التواصل</label>
+                    <input type="text" id="propContact" placeholder="مثال: 0500000000" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>الوسطاء المتعاقدون (افصل بينهم بفاصلة ,)</label>
+                <input type="text" id="propBrokers" placeholder="مثال: مكتب التمليك, وسيط الرياض">
+            </div>
+
+            <div class="form-group">
+                <label>تفاصيل العقار الإضافية</label>
+                <textarea id="propDetails" placeholder="مثال: 6 غرف رئيسية، مجلس رجال، حوش واسع، مسبح مدمج..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>صورة العقار الأساسية </label>
+                <input type="file" id="propImageFile" accept="image/*">
+            </div>
+
+            <div class="form-group">
+                <label>وسائط إضافية متعددة </label>
+                <input type="file" id="propExtraFiles" accept="image/*,video/*" multiple>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">حفظ العقار والوسائط</button>
+            <div id="cancelEditWrapper" style="display: none;">
+                <button type="button" class="cancel-edit-btn" onclick="exitEditMode()">إلغاء التعديل</button>
+            </div>
+        </form>
+    </div>
+
+    <div>
+        <div class="search-wrapper">
+            <input type="text" id="searchBar" placeholder="ابحث بالمدينة، الحي، المالك، التفاصيل، أو الوسطاء...">
+            
+            <select id="filterType">
+                <option value="الكل">كل العقارات</option>
+                <option value="فيلا">فيلا</option>
+                <option value="شقة">شقة</option>
+                <option value="عمارة">عمارة</option>
+                <option value="أرض">أرض</option>
+            </select>
+
+            <select id="filterCity">
+                <option value="الكل">كل المدن</option>
+            </select>
+        </div>
+
+        <div class="properties-grid" id="propertiesContainer"></div>
+    </div>
+
+</div>
+
+<div class="modal-overlay" id="propertyModal" onclick="closeModal(event)">
+    <div class="modal-wrapper">
+        <div class="modal-header">
+            <h2 id="modalHeaderTitle">الملف الإداري للعقار</h2>
+            <button class="close-modal-btn" onclick="toggleModal(false)">&times;</button>
+        </div>
+        <div class="modal-content-body">
+            <div class="modal-highlight-section">
+                <h3 class="modal-title-big" id="modalMainTitle">فيلا في حي</h3>
+                <span class="modal-price-big" id="modalMainPrice">0 ريال</span>
+            </div>
+
+            <div class="modal-grid-features">
+                <div class="modal-feature-box">
+                    <span>الموقع الجغرافي</span>
+                    <strong id="modalLocation">-</strong>
+                </div>
+                <div class="modal-feature-box">
+                    <span>المساحة الإجمالية</span>
+                    <strong id="modalSpace">0 م²</strong>
+                </div>
+                <div class="modal-feature-box">
+                    <span>المالك وبياناته</span>
+                    <strong id="modalOwner">-</strong>
+                </div>
+            </div>
+
+            <div class="modal-long-details" id="modalLongDetails"></div>
+
+            <div id="modalBrokersArea" style="margin-bottom: 35px;"></div>
+
+            <div class="gallery-title">مستندات ووسائط العقار الملحقة</div>
+            <div class="modal-gallery-grid" id="modalGalleryGrid"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let properties = JSON.parse(localStorage.getItem('harthi_properties')) || [];
+
+    const propertiesContainer = document.getElementById('propertiesContainer');
+    const propertyForm = document.getElementById('propertyForm');
+    const searchBar = document.getElementById('searchBar');
+    const filterType = document.getElementById('filterType');
+    const filterCity = document.getElementById('filterCity');
+    
+    const formPanel = document.getElementById('formPanel');
+    const formTitle = document.getElementById('formTitle');
+    const submitBtn = document.getElementById('submitBtn');
+    const editPropertyId = document.getElementById('editPropertyId');
+    const cancelEditWrapper = document.getElementById('cancelEditWrapper');
+    const propertyModal = document.getElementById('propertyModal');
+
+    function saveToLocalStorage() {
+        localStorage.setItem('harthi_properties', JSON.stringify(properties));
+    }
+
+    function updateCityFilterOptions() {
+        const cities = ['الكل', ...new Set(properties.map(p => p.city.trim()))];
+        const currentSelection = filterCity.value;
+        filterCity.innerHTML = '';
+        cities.forEach(city => {
+            const option = document.createElement('option');
+            option.value = city;
+            option.textContent = city === 'الكل' ? 'كل المدن' : city;
+            filterCity.appendChild(option);
+        });
+        if (cities.includes(currentSelection)) filterCity.value = currentSelection;
+    }
+
+    // دالة مخصصة لنسخ رقم الجوال فوراً بضغطة واحدة من الخارج
+    function copyContactNumber(number, event) {
+        event.stopPropagation(); // منع فتح الـ Modal عند الضغط للنسخ
+        navigator.clipboard.writeText(number).then(() => {
+            alert('تم نسخ رقم التواصل بنجاح: ' + number);
+        }).catch(err => {
+            console.error('فشل في نسخ الرقم التلقائي', err);
+        });
+    }
+
+    function displayProperties(data) {
+        propertiesContainer.innerHTML = '';
+        
+        if(data.length === 0) {
+            propertiesContainer.innerHTML = '<p style="text-align:center; color:#94a3b8; grid-column: 1/-1; padding: 40px; font-weight:600;">لا توجد نتائج مطابقة لعناصر البحث.</p>';
+            return;
+        }
+
+        data.forEach(prop => {
+            // التعديل 1: الاعتماد الكلي على النص المكتوب بدون فرض كلمة "مكتب" إجبارياً
+            const brokersTags = prop.brokers && prop.brokers.length > 0 && prop.brokers[0].trim() !== "" 
+                ? prop.brokers.map(b => `<span class="broker-chip">${b.trim()}</span>`).join('') 
+                : '<span style="color:var(--text-muted); font-size:0.85rem;">لا يوجد</span>';
+            
+            let mediaHeaderHTML = '';
+            if (prop.image) {
+                mediaHeaderHTML = `
+                    <div class="card-media">
+                        <img src="${prop.image}" alt="واجهة العقار">
+                        <span class="card-badge">${prop.type}</span>
+                        <span class="card-price">${prop.price.toLocaleString()} ريال</span>
+                    </div>`;
+            } else {
+                mediaHeaderHTML = `
+                    <div class="no-image-layout">
+                        <div class="info-wrapper">
+                            <span class="type-tag">${prop.type}</span>
+                            <span class="price-tag">${prop.price.toLocaleString()} ريال</span>
+                        </div>
+                    </div>`;
+            }
+            
+            const detailsHTML = prop.details ? `<div class="card-details-text">${prop.details.substring(0, 70)}...</div>` : '';
+
+            const card = document.createElement('div');
+            card.className = 'realestate-card';
+            card.setAttribute('onclick', `openPropertyModal(${prop.id}, event)`);
+            
+            // التعديل 2: إضافة حقل الجوال القابل للنسخ تحت كلمة المالك والمساحة مباشرة بالخارج
+            card.innerHTML = `
+                ${mediaHeaderHTML}
+                <div class="card-body">
+                    <h3 class="card-title">${prop.type} في حي ${prop.district}</h3>
+                    <div class="card-location">منطقة ${prop.city}، حي ${prop.district}</div>
+                    
+                    <div class="card-features">
+                        <div>المساحة: <strong>${prop.space} م²</strong></div>
+                        <div>المالك: <strong>${prop.owner}</strong></div>
+                    </div>
+
+                    <div class="card-contact-field" onclick="copyContactNumber('${prop.contact}', event)" title="اضغط لنسخ الرقم الفوري">
+                        <span> رقم التواصل : <span style="font-family:sans-serif;">${prop.contact}</span></span>
+                        <span class="copy-badge">نسخ</span>
+                    </div>
+
+                    ${detailsHTML}
+
+                    <div class="brokers-section">
+                        <label>الوسطاء المتعاقدون :</label>
+                        <div>${brokersTags}</div>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <button class="btn-action btn-edit" onclick="enterEditMode(${prop.id}); event.stopPropagation();">تعديل البيانات</button>
+                    <button class="btn-action btn-delete" onclick="deleteProperty(${prop.id}); event.stopPropagation();">حذف العقار</button>
+                </div>
+            `;
+            propertiesContainer.appendChild(card);
+        });
+    }
+
+    function openPropertyModal(id, event) {
+        const prop = properties.find(p => p.id === id);
+        if (!prop) return;
+
+        document.getElementById('modalHeaderTitle').textContent = `الملف الإداري لعقار رقم #${prop.id}`;
+        document.getElementById('modalMainTitle').textContent = `${prop.type} في حي ${prop.district}`;
+        document.getElementById('modalMainPrice').textContent = `${prop.price.toLocaleString()} ريال سعودي`;
+        document.getElementById('modalLocation').textContent = `${prop.city}، ${prop.district}`;
+        document.getElementById('modalSpace').textContent = `${prop.space} م²`;
+        document.getElementById('modalOwner').innerHTML = `${prop.owner}<br><span style="font-size:0.85rem; color:var(--text-muted); font-weight:normal; font-family:sans-serif;">تواصل: ${prop.contact}</span>`;
+        document.getElementById('modalLongDetails').textContent = prop.details ? prop.details : "لا توجد تفاصيل نصية إضافية مدرجة لهذا العقار.";
+        
+        // التعديل 1 للـ Modal أيضاً: عرض اسم الوسيط الحقيقي والحر بدون سوابق إجبارية
+        const brokersTags = prop.brokers && prop.brokers.length > 0 && prop.brokers[0].trim() !== ""
+            ? prop.brokers.map(b => `<span class="broker-chip" style="font-size:0.9rem; padding:6px 16px;">👤 ${b.trim()}</span>`).join('')
+            : '<span style="color:var(--text-muted);">لا يوجد وسطاء مسجلين للعقار</span>';
+            
+        document.getElementById('modalBrokersArea').innerHTML = `<label style="display:block; margin-bottom:8px; font-weight:700; color:var(--primary-color);">الشبكة التعاقدية للوسطاء:</label><div>${brokersTags}</div>`;
+
+        const galleryGrid = document.getElementById('modalGalleryGrid');
+        galleryGrid.innerHTML = '';
+
+        if (prop.image) {
+            appendMediaToGallery(prop.image, 'image/jpeg', galleryGrid);
+        }
+
+        if (prop.mediaList && prop.mediaList.length > 0) {
+            prop.mediaList.forEach(media => {
+                appendMediaToGallery(media.url, media.type, galleryGrid);
+            });
+        }
+
+        if (!prop.image && (!prop.mediaList || prop.mediaList.length === 0)) {
+            galleryGrid.innerHTML = '<p style="color:var(--text-muted); font-size:0.95rem; grid-column:1/-1;">لا توجد مستندات مرئية أو وسائط مرفوعة لهذا العقار حالياً.</p>';
+        }
+
+        toggleModal(true);
+    }
+
+    function appendMediaToGallery(url, type, container) {
+        const itemWrapper = document.createElement('div');
+        itemWrapper.className = 'gallery-item-wrapper';
+        
+        if (type.startsWith('video/')) {
+            itemWrapper.innerHTML = `<video src="${url}" controls muted></video>`;
+        } else {
+            itemWrapper.innerHTML = `<img src="${url}" alt="وسيط عقاري">`;
+        }
+        
+        const overlay = document.createElement('div');
+        overlay.className = 'download-media-overlay';
+        overlay.innerHTML = `<a href="${url}" download="عقار_ملف_${Date.now()}" class="btn-download">تحميل الملف</a>`;
+        
+        itemWrapper.appendChild(overlay);
+        container.appendChild(itemWrapper);
+    }
+
+    function toggleModal(show) {
+        if (show) propertyModal.classList.add('active');
+        else propertyModal.classList.remove('active');
+    }
+
+    function closeModal(e) {
+        if (e.target === propertyModal) toggleModal(false);
+    }
+
+    function enterEditMode(id) {
+        const prop = properties.find(p => p.id === id);
+        if (!prop) return;
+
+        document.getElementById('propType').value = prop.type;
+        document.getElementById('propSpace').value = prop.space;
+        document.getElementById('propCity').value = prop.city;
+        document.getElementById('propDistrict').value = prop.district;
+        document.getElementById('propPrice').value = prop.price;
+        document.getElementById('propOwner').value = prop.owner;
+        document.getElementById('propContact').value = prop.contact;
+        document.getElementById('propBrokers').value = prop.brokers.join(', ');
+        document.getElementById('propDetails').value = prop.details || '';
+        
+        editPropertyId.value = prop.id;
+        formPanel.classList.add('edit-mode');
+        formTitle.textContent = "تعديل بيانات العقار الحالي";
+        submitBtn.textContent = "تحديث بيانات العقار";
+        cancelEditWrapper.style.display = "block";
+        
+        formPanel.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function exitEditMode() {
+        editPropertyId.value = "";
+        formPanel.classList.remove('edit-mode');
+        formTitle.textContent = "تسجيل عقار جديد";
+        submitBtn.textContent = "حفظ العقار والوسائط";
+        cancelEditWrapper.style.display = "none";
+        propertyForm.reset();
+    }
+
+    function deleteProperty(id) {
+        if (confirm("هل أنت متأكد من رغبتك في حذف هذا العقار نهائياً من النظام؟")) {
+            properties = properties.filter(p => p.id !== id);
+            if (editPropertyId.value == id) exitEditMode();
+            saveToLocalStorage();
+            updateCityFilterOptions();
+            filterProperties();
+        }
+    }
+
+    propertyForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const type = document.getElementById('propType').value;
+        const space = document.getElementById('propSpace').value;
+        const city = document.getElementById('propCity').value;
+        const district = document.getElementById('propDistrict').value;
+        const price = document.getElementById('propPrice').value;
+        const owner = document.getElementById('propOwner').value;
+        const contact = document.getElementById('propContact').value;
+        const details = document.getElementById('propDetails').value;
+        const brokers = document.getElementById('propBrokers').value.split('،').join(',').split(',');
+
+        const imageFileInput = document.getElementById('propImageFile');
+        const extraFilesInput = document.getElementById('propExtraFiles'); 
+        
+        const isEditMode = editPropertyId.value !== "";
+        let existingProp = isEditMode ? properties.find(p => p.id === parseInt(editPropertyId.value)) : null;
+
+        let imageUrl = isEditMode ? existingProp.image : "";
+        let mediaList = isEditMode ? (existingProp.mediaList || []) : [];
+
+        if (imageFileInput.files && imageFileInput.files[0]) {
+            imageUrl = URL.createObjectURL(imageFileInput.files[0]);
+        }
+        
+        if (extraFilesInput.files && extraFilesInput.files.length > 0) {
+            for (let i = 0; i < extraFilesInput.files.length; i++) {
+                const file = extraFilesInput.files[i];
+                mediaList.push({
+                    url: URL.createObjectURL(file),
+                    type: file.type
+                });
+            }
+        }
+
+        if (isEditMode) {
+            existingProp.type = type;
+            existingProp.space = parseInt(space);
+            existingProp.city = city.trim();
+            existingProp.district = district.trim();
+            existingProp.price = parseInt(price);
+            existingProp.owner = owner;
+            existingProp.contact = contact;
+            existingProp.details = details;
+            existingProp.brokers = brokers;
+            existingProp.image = imageUrl;
+            existingProp.mediaList = mediaList;
+            
+            exitEditMode();
+        } else {
+            const newProperty = {
+                id: Date.now(),
+                type,
+                space: parseInt(space),
+                city: city.trim(),
+                district: district.trim(),
+                price: parseInt(price),
+                owner,
+                contact,
+                brokers,
+                details,
+                image: imageUrl,
+                mediaList: mediaList 
+            };
+            properties.push(newProperty);
+            propertyForm.reset();
+        }
+
+        saveToLocalStorage(); 
+        updateCityFilterOptions();
+        filterProperties();
+    });
+
+    function filterProperties() {
+        const searchText = searchBar.value.toLowerCase();
+        const selectedType = filterType.value;
+        const selectedCity = filterCity.value;
+
+        const filtered = properties.filter(prop => {
+            const matchesType = (selectedType === 'الكل' || prop.type === selectedType);
+            const matchesCity = (selectedCity === 'الكل' || prop.city === selectedCity);
+            const matchesSearch = prop.owner.toLowerCase().includes(searchText) || 
+                                  prop.city.toLowerCase().includes(searchText) || 
+                                  prop.district.toLowerCase().includes(searchText) || 
+                                  (prop.details && prop.details.toLowerCase().includes(searchText)) ||
+                                  prop.brokers.some(b => b.toLowerCase().includes(searchText));
+
+            return matchesType && matchesCity && matchesSearch;
+        });
+
+        displayProperties(filtered);
+    }
+
+    searchBar.addEventListener('input', filterProperties);
+    filterType.addEventListener('change', filterProperties);
+    filterCity.addEventListener('change', filterProperties);
+
+    updateCityFilterOptions();
+    filterProperties();
+</script>
+
+</body>
+</html>
